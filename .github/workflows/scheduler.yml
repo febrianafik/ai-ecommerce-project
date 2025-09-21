@@ -26,5 +26,18 @@ jobs:
         run: python scripts/collector.py
 
       # (Langkah untuk upload ke Supabase akan ditambahkan di sini)
+ - name: Run collector script
+        id: collector
+        run: python scripts/collector.py
+
+      - name: Trigger Vercel AI Function
+        run: |
+          curl -X POST \
+          "${{ secrets.VERCEL_FUNCTION_URL }}" \
+          -H "Content-Type: application/json" \
+          -H "x-secret-key: ${{ secrets.INTERNAL_API_SECRET }}" \
+          --data-binary "@trends_output.json"
+
+
 
 
