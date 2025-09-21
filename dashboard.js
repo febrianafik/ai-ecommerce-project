@@ -73,6 +73,56 @@ async function fetchAndRenderDrafts() {
     draftsContainer.appendChild(cardClone);
   }
 }
+// Tambahkan ini di bawah function fetchAndRenderDrafts, sebelum main()
+
+function setupUploadButtons() {
+  document.querySelectorAll(".upload-button").forEach(button => {
+    button.addEventListener("click", async (e) => {
+      const draftId = e.target.dataset.draftId;
+
+      if (!draftId) {
+        alert("Draft ID tidak ditemukan!");
+        return;
+      }
+
+      // Tampilkan loading state di tombol
+      e.target.disabled = true;
+      e.target.textContent = "Mengupload...";
+
+      try {
+        const response = await fetch("/api/upload-shopee", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ draftId }),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          alert(`✅ ${result.message}`);
+        } else {
+          alert(`❌ Gagal upload: ${result.error}`);
+        }
+      } catch (err) {
+        console.error("Error saat upload:", err);
+        alert("Terjadi kesalahan saat menghubungi server.");
+      } finally {
+        e.target.disabled = false;
+        e.target.textContent = "Upload";
+      }
+    });
+  });
+}
+
+// Panggil setelah draft selesai dirender
+async function fetchAndRenderDrafts() {
+  // ... kode yang sudah ada (render kartu)
+  draftsContainer.appendChild(cardClone);
+  }
+
+  // Setelah semua card ditambahkan
+  setupUploadButtons();
+}
 
 // Jalankan main
 main();
